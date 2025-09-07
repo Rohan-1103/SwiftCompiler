@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
     const supabase = await createClient()
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const { data: project, error: projectError } = await supabase
       .from("projects")
       .select("id")
-      .eq("id", params.id)
+      .eq("id", params.projectId)
       .eq("user_id", user.id)
       .single()
 
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const { data: files, error } = await supabase
       .from("project_files")
       .select("*")
-      .eq("project_id", params.id)
+      .eq("project_id", params.projectId)
       .order("path", { ascending: true })
 
     if (error) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
     const supabase = await createClient()
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const { data: project, error: projectError } = await supabase
       .from("projects")
       .select("id")
-      .eq("id", params.id)
+      .eq("id", params.projectId)
       .eq("user_id", user.id)
       .single()
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const { data: existingFile } = await supabase
       .from("project_files")
       .select("id")
-      .eq("project_id", params.id)
+      .eq("project_id", params.projectId)
       .eq("path", path)
       .single()
 
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const { data: file, error } = await supabase
       .from("project_files")
       .insert({
-        project_id: params.id,
+        project_id: params.projectId,
         user_id: user.id,
         name,
         path,

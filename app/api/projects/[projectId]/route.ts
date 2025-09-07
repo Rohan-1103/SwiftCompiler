@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
     const supabase = await createClient()
 
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const { data: project, error } = await supabase
       .from("projects")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", params.projectId)
       .eq("user_id", user.id)
       .single()
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
     const supabase = await createClient()
 
@@ -62,7 +62,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         is_public: is_public || false,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.id)
+      .eq("id", params.projectId)
       .eq("user_id", user.id)
       .select()
       .single()
@@ -79,7 +79,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { projectId: string } }) {
   try {
     const supabase = await createClient()
 
@@ -93,7 +93,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // Delete the project (files will be deleted automatically due to cascade)
-    const { error } = await supabase.from("projects").delete().eq("id", params.id).eq("user_id", user.id)
+    const { error } = await supabase.from("projects").delete().eq("id", params.projectId).eq("user_id", user.id)
 
     if (error) {
       console.error("Database error:", error)
